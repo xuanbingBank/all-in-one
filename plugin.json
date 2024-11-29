@@ -27,6 +27,16 @@
         "设置",
         "aio设置"
       ]
+    },
+    {
+      "code": "notes",
+      "explain": "笔记",
+      "icon": "icon/markdown.png",
+      "cmds": [
+        "笔记",
+        "aio笔记",
+        "markdown笔记"
+      ]
     }
   ]
 }

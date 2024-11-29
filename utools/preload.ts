@@ -19,7 +19,7 @@ window.utools.onPluginReady(() => {})
  * @description 处理插件进入事件
  */
 window.utools.onPluginEnter(({ code }) => {
-  window.initialView = code as 'home' | 'settings'
+  window.initialView = code as 'home' | 'settings' | 'notes'
   window.dispatchEvent(createViewChangeEvent(code))
 })
 
@@ -36,6 +36,14 @@ window.exports = {
     }
   },
   "settings": {
+    mode: "none",
+    args: {
+      enter: (_action: { code: string }) => {
+        window.utools?.showMainWindow()
+      }
+    }
+  },
+  "notes": {
     mode: "none",
     args: {
       enter: (_action: { code: string }) => {

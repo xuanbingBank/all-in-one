@@ -37,7 +37,7 @@ declare global {
     interface Window {
         versions: ProcessVersions;
         utools: UTools;
-        initialView: 'home' | 'settings';
+        initialView: 'home' | 'settings' | 'notes';
     }
 }
    

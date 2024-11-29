@@ -143,14 +143,14 @@ const getCurrentComponent = () => {
 const handleViewChange = (event: Event) => {
   const customEvent = event as CustomEvent
   const view = customEvent.detail as ViewType
-  if (view === 'home' || view === 'settings') {
+  if (view === 'home' || view === 'settings' || view === 'notes') {
     currentView.value = view
   }
 }
 
 // 监听 initialView 变化
 watch(() => window.initialView, (newView) => {
-  if (newView === 'home' || newView === 'settings') {
+  if (newView === 'home' || newView === 'settings' || newView === 'notes') {
     currentView.value = newView
   }
 }, { immediate: true })
