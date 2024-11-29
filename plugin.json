@@ -2,7 +2,7 @@
   "logo": "logo.png",
   "preload": "preload.js",
   "name": "all-in-one",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "pluginName": "all-in-one",
   "description": "一个啥都有的小插件",
   "author": "玄冰",
