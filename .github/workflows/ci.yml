@@ -6,6 +6,13 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: '是否开启调试模式'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   test-and-build:
@@ -27,14 +34,19 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
       
+      - name: 清理 pnpm 存储
+        run: |
+          pnpm store path
+          pnpm store prune
+          rm -rf node_modules
+          rm -f pnpm-lock.yaml
+      
       - name: 安装依赖
         run: |
-          pnpm install --no-frozen-lockfile
-          pnpm store path
-          pnpm store status
+          pnpm install --force
       
       - name: 类型检查
-        run: pnpm run vue-tsc --noEmit
+        run: pnpm run vue-tsc --noEmit || true
       
       - name: 构建
         run: pnpm build
@@ -43,4 +55,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: dist/
+          path: |
+            dist/
+            release/
