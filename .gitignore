@@ -42,3 +42,6 @@ docs/
 
 # 测试
 test/
+
+# 编辑器
+.vscode/

@@ -1,0 +1,40 @@
+name: Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '新版本号 (例如: 1.0.0)'
+        required: true
+        
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: 设置 Git 用户
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: 更新版本号
+        run: |
+          # 更新 package.json
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          
+          # 更新 plugin.json
+          sed -i 's/"version": ".*"/"version": "${{ github.event.inputs.version }}"/' plugin.json
+          
+          # 提交更改
+          git add package.json plugin.json
+          git commit -m "chore: 更新版本至 v${{ github.event.inputs.version }}"
+          git tag "v${{ github.event.inputs.version }}"
+          
+          # 推送更改
+          git push
+          git push --tags 
