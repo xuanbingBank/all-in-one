@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="https://github.com/xuanbingBank/all-in-one/raw/main/public/logo.png" alt="logo">
+  <img src="./public/logo.png" alt="logo">
   <h1 align="center">All-In-One</h1>
 </div>
 
