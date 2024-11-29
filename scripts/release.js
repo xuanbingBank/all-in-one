@@ -3,6 +3,26 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
+ * @description 统一文件的行尾符为 LF
+ * @param {string} content 文件内容
+ * @returns {string}
+ */
+function normalizeLineEndings(content) {
+  return content.replace(/\r\n/g, '\n');
+}
+
+/**
+ * @description 写入文件并确保使用 LF 行尾符
+ * @param {string} filePath 文件路径
+ * @param {object} content 要写入的内容
+ */
+function writeJsonWithLF(filePath, content) {
+  const jsonString = JSON.stringify(content, null, 2) + '\n';
+  const normalizedContent = normalizeLineEndings(jsonString);
+  fs.writeFileSync(filePath, normalizedContent, 'utf8');
+}
+
+/**
  * @description 检查标签是否存在
  * @param {string} tag 标签名
  * @returns {boolean}
@@ -50,13 +70,13 @@ function updateVersion(version) {
     const packagePath = path.resolve(__dirname, '../package.json');
     const packageJson = require(packagePath);
     packageJson.version = version;
-    fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n');
+    writeJsonWithLF(packagePath, packageJson);
 
     // 更新 plugin.json
     const pluginPath = path.resolve(__dirname, '../plugin.json');
     const pluginJson = require(pluginPath);
     pluginJson.version = version;
-    fs.writeFileSync(pluginPath, JSON.stringify(pluginJson, null, 2) + '\n');
+    writeJsonWithLF(pluginPath, pluginJson);
 
     // Git 操作
     execSync('git add package.json plugin.json', { stdio: 'inherit' });
