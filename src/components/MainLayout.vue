@@ -92,26 +92,6 @@ const menuItems: MenuItem[] = [
             window.dispatchEvent(new CustomEvent('showStyleSettings'))
           }, 0)
         }
-      },
-      {
-        title: '导入配置',
-        icon: '📥',
-        action: () => {
-          currentView.value = 'settings'
-          setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('importSettings'))
-          }, 0)
-        }
-      },
-      {
-        title: '导出配置',
-        icon: '📤',
-        action: () => {
-          currentView.value = 'settings'
-          setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('exportSettings'))
-          }, 0)
-        }
       }
     ]
   }
