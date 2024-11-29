@@ -37,4 +37,8 @@ dist-electron
 release
 .cursorrules
 
+# docs
 docs/
+
+# 测试
+test/
