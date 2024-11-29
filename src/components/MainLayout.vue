@@ -58,25 +58,7 @@ const menuItems: MenuItem[] = [
     path: 'home',
     title: '首页',
     icon: '🏠',
-    component: HomeView,
-    children: [
-      {
-        title: '快速开始',
-        icon: '⚡',
-        action: () => {
-          currentView.value = 'home'
-          window.utools?.showNotification('快速开始')
-        }
-      },
-      {
-        title: '最近使用',
-        icon: '🕒',
-        action: () => {
-          currentView.value = 'home'
-          window.utools?.showNotification('最近使用')
-        }
-      }
-    ]
+    component: HomeView
   },
   {
     path: 'settings',
