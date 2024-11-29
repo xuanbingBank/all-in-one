@@ -12,12 +12,25 @@ export interface PluginEnterEvent {
     payload: any;
 }
 
+export interface Settings {
+    theme: 'light' | 'dark' | 'system';
+    language: 'zh_CN' | 'en_US';
+    notifications: boolean;
+    hotkey: string;
+}
+
 export interface UTools {
     showMainWindow: () => void;
     hideMainWindow: () => void;
     outPlugin: () => void;
     onPluginEnter: (callback: (event: PluginEnterEvent) => void) => void;
     onPluginReady: (callback: () => void) => void;
+    showNotification: (text: string) => void;
+    dbStorage: {
+        setItem: (key: string, value: any) => void;
+        getItem: (key: string) => any;
+        removeItem: (key: string) => void;
+    };
 }
 
 declare global {
