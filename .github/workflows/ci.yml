@@ -24,50 +24,30 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v2
+      # 首先设置 pnpm
+      - uses: pnpm/action-setup@v2
         with:
           version: 8
+          run_install: false
       
-      - name: 设置 Node.js
-        uses: actions/setup-node@v3
+      # 然后设置 Node.js
+      - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
       
-      - name: 获取 pnpm store 目录
-        id: pnpm-cache
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: 设置 pnpm 缓存
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-      
+      # 安装依赖
       - name: 安装依赖
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       
-      - name: 更新版本号
-        run: |
-          npm version ${{ github.event.inputs.version }} --no-git-tag-version
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add package.json
-          git commit -m "chore: release v${{ github.event.inputs.version }}"
-          git tag "v${{ github.event.inputs.version }}"
-      
+      # 构建
       - name: 构建
         run: pnpm build
         env:
           NODE_ENV: ${{ github.event.inputs.environment }}
       
+      # 创建 Release
       - name: 创建 Release
         uses: softprops/action-gh-release@v1
         with:
@@ -83,8 +63,3 @@ jobs:
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: 推送更改
-        run: |
-          git push
-          git push --tags

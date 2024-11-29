@@ -1,34 +1,70 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号 (例如: 1.0.2)'
+        required: true
+        type: string
+      environment:
+        description: '选择环境'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
+        - development
 
 jobs:
-  release:
+  build-and-release:
     runs-on: ubuntu-latest
     
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
       
       - name: 设置 Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'pnpm'
+      
+      - name: 获取 pnpm store 目录
+        id: pnpm-cache
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       
       - name: 安装依赖
-        run: npm install
+        run: pnpm install --frozen-lockfile
       
       - name: 构建
-        run: npm run build
+        run: pnpm build
+        env:
+          NODE_ENV: ${{ github.event.inputs.environment }}
       
       - name: 创建 Release
-        id: create_release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release v${{ github.event.inputs.version }}
           files: |
             dist/*.upx
             release/**/*.exe
@@ -37,5 +73,30 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
+          body: |
+            ## 更新内容
+            
+            ### 新特性 ✨
+            - 待补充
+            
+            ### 修复 🐛
+            - 待补充
+            
+            ### 优化 ⚡️
+            - 待补充
+            
+            ### 文档 📝
+            - 待补充
+            
+            ### 其他 🔧
+            - 版本更新至 v${{ github.event.inputs.version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-${{ github.event.inputs.environment }}
+          path: |
+            dist/
+            release/
