@@ -38,29 +38,12 @@ const applyCustomStyle = () => {
   root.style.setProperty('--content-bg-color', style.contentBgColor)
   root.style.setProperty('--content-text-color', style.contentTextColor)
 
-  // 直接应用到主内容区
-  const mainContent = document.querySelector('.main-content') as HTMLElement
-  if (mainContent) {
-    mainContent.style.backgroundColor = style.contentBgColor
-    mainContent.style.color = style.contentTextColor
-  }
-
-  // 应用到设置组件
-  const settingsGroups = document.querySelectorAll('.settings-group') as NodeListOf<HTMLElement>
-  settingsGroups.forEach(group => {
-    group.style.backgroundColor = adjustColor(style.contentBgColor, 10)
-    group.style.color = style.contentTextColor
+  // 只应用到除设置页面外的主内容区
+  const mainContents = document.querySelectorAll('.main-content:not(.style-settings)') as NodeListOf<HTMLElement>
+  mainContents.forEach(content => {
+    content.style.backgroundColor = style.contentBgColor
+    content.style.color = style.contentTextColor
   })
-
-  // 应用到标签文本
-  const labels = document.querySelectorAll('.setting-item label') as NodeListOf<HTMLElement>
-  labels.forEach(label => {
-    label.style.color = style.contentTextColor
-  })
-
-  // 应用到整个应用
-  document.body.style.backgroundColor = style.contentBgColor
-  document.body.style.color = style.contentTextColor
 }
 
 /**
@@ -141,6 +124,41 @@ const initStyle = () => {
   applyCustomStyle()
 }
 
+/**
+ * @description 处理宽度输入
+ */
+const handleWidthInput = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  let value = parseInt(input.value)
+  
+  // 限制输入范围
+  if (value < 120) {
+    value = 120
+    customStyle.value.menuWidth = 120
+  } else if (value > 500) {
+    value = 500
+    customStyle.value.menuWidth = 500
+  }
+  
+  input.value = value.toString()
+}
+
+/**
+ * @description 调整宽度
+ */
+const adjustWidth = (type: 'increase' | 'decrease') => {
+  const step = 10
+  let newWidth = customStyle.value.menuWidth
+  
+  if (type === 'increase') {
+    newWidth = Math.min(500, newWidth + step)
+  } else {
+    newWidth = Math.max(120, newWidth - step)
+  }
+  
+  customStyle.value.menuWidth = newWidth
+}
+
 // 监听样式变化实时预览
 watch(() => customStyle.value, () => {
   applyCustomStyle()
@@ -153,7 +171,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="style-settings">
+  <div class="style-settings-page">
     <h3>自定义样式设置</h3>
     
     <div class="settings-group">
@@ -163,11 +181,17 @@ onMounted(() => {
         <div class="input-with-unit">
           <input 
             type="number" 
-            v-model="customStyle.menuWidth"
-            min="150"
-            max="300"
+            v-model.number="customStyle.menuWidth"
+            min="120"
+            max="500"
+            step="10"
+            @input="handleWidthInput"
+            readonly
           >
-          <span class="unit">px</span>
+          <div class="number-controls">
+            <button class="control-btn" @click="adjustWidth('decrease')">-</button>
+            <button class="control-btn" @click="adjustWidth('increase')">+</button>
+          </div>
         </div>
       </div>
       
@@ -199,7 +223,7 @@ onMounted(() => {
     <div class="settings-group">
       <h4>内容区样式</h4>
       <div class="setting-item">
-        <label>背景颜色</label>
+        <label>内容区背景颜色</label>
         <input 
           type="color" 
           v-model="customStyle.contentBgColor"
@@ -223,8 +247,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.style-settings {
+.style-settings-page {
   padding: var(--spacing-xl);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 .settings-group {
@@ -262,6 +288,7 @@ h4 {
 .input-with-unit {
   display: flex;
   align-items: center;
+  gap: var(--spacing-sm);
 }
 
 .unit {
@@ -276,16 +303,30 @@ input[type="number"] {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-size: var(--font-sm);
-  transition: border-color var(--transition-fast);
+  background-color: var(--bg-disabled);
+  cursor: not-allowed;
 }
 
-input[type="number"]:hover {
-  border-color: var(--border-hover);
+.number-controls {
+  display: flex;
+  gap: 4px;
 }
 
-input[type="number"]:focus {
-  border-color: var(--border-active);
-  outline: none;
+.control-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.control-btn:hover {
+  background-color: var(--bg-hover);
 }
 
 input[type="color"] {
@@ -310,13 +351,14 @@ input[type="color"]:hover {
 }
 
 .save-btn, .reset-btn {
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-xl);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: var(--font-sm);
+  font-size: var(--font-md);
   font-weight: var(--font-medium);
-  transition: background-color var(--transition-fast);
+  min-width: 100px;
+  transition: all var(--transition-fast);
 }
 
 .save-btn {
@@ -326,6 +368,7 @@ input[type="color"]:hover {
 
 .save-btn:hover {
   background-color: var(--primary-hover);
+  transform: translateY(-2px);
 }
 
 .reset-btn {
@@ -335,10 +378,11 @@ input[type="color"]:hover {
 
 .reset-btn:hover {
   background-color: var(--bg-disabled);
+  transform: translateY(-2px);
 }
 
 /* 添加过渡效果 */
-.style-settings,
+.style-settings-page,
 .settings-group,
 .setting-item,
 input {
