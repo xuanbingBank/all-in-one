@@ -3,9 +3,9 @@
  */
 {
   "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-  "appId": "YourAppID",
+  "appId": "all-in-one",
   "asar": true,
-  "productName": "YourAppName",
+  "productName": "xuanbing",
   "icon":"public/logo.ico",
   "directories": {
     "output": "release/${version}"
