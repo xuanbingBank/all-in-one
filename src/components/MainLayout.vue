@@ -71,8 +71,9 @@ const menuItems: MenuItem[] = [
         icon: '🔧',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('showGeneralSettings'))
-          expandedMenu.value = null
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showGeneralSettings'))
+          }, 0)
         }
       },
       {
@@ -80,8 +81,9 @@ const menuItems: MenuItem[] = [
         icon: '🎨',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('showStyleSettings'))
-          expandedMenu.value = null
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showStyleSettings'))
+          }, 0)
         }
       },
       {
@@ -89,8 +91,9 @@ const menuItems: MenuItem[] = [
         icon: '📥',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('importSettings'))
-          expandedMenu.value = null
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('importSettings'))
+          }, 0)
         }
       },
       {
@@ -98,8 +101,9 @@ const menuItems: MenuItem[] = [
         icon: '📤',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('exportSettings'))
-          expandedMenu.value = null
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('exportSettings'))
+          }, 0)
         }
       }
     ]
@@ -113,13 +117,13 @@ const handleMenuClick = (path: ViewType) => {
   // 获取当前点击的菜单项
   const menuItem = menuItems.find(item => item.path === path)
   
-  // 如果有子菜单，只处理展开/折叠
+  // 如果有子菜单，只处理展开
   if (menuItem?.children?.length) {
-    if (expandedMenu.value === path) {
-      expandedMenu.value = null
-    } else {
+    // 如果点击的不是当前展开的菜单，则展开新菜单
+    if (expandedMenu.value !== path) {
       expandedMenu.value = path
     }
+    // 移除折叠逻辑，保持子菜单展开状态
     return
   }
   

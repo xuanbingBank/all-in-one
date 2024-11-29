@@ -82,17 +82,28 @@ onMounted(() => {
 const currentSettingView = ref<'general' | 'style'>('general')
 
 /**
+ * @description 处理显示基础设置
+ */
+const handleShowGeneralSettings = () => {
+  currentSettingView.value = 'general'
+}
+
+/**
  * @description 处理显示样式设置
  */
 const handleShowStyleSettings = () => {
   currentSettingView.value = 'style'
 }
 
+// 添加事件监听
 onMounted(() => {
+  window.addEventListener('showGeneralSettings', handleShowGeneralSettings)
   window.addEventListener('showStyleSettings', handleShowStyleSettings)
 })
 
+// 移除事件监听
 onUnmounted(() => {
+  window.removeEventListener('showGeneralSettings', handleShowGeneralSettings)
   window.removeEventListener('showStyleSettings', handleShowStyleSettings)
 })
 </script>
