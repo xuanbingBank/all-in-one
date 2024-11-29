@@ -74,13 +74,5 @@ if (!versionRegex.test(version)) {
   process.exit(1);
 }
 
-// 检查 GitHub CLI 是否已登录
-try {
-  execSync('gh auth status', { stdio: 'ignore' });
-} catch (error) {
-  console.error('请先登录 GitHub CLI');
-  console.log('运行 "gh auth login" 进行登录');
-  process.exit(1);
-}
 
 updateVersion(version); 
