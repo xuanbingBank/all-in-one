@@ -1,4 +1,10 @@
-# utools-plugin-template
+
+<div align="center">
+  <img src="https://github.com/xuanbingBank/all-in-one/raw/main/public/logo.png" alt="logo">
+  <h1 align="center">All-In-One</h1>
+</div>
+
+# All-In-One
 
 基于`utools-plugin-template`模版开发，一个主打啥都有的插件，根据评论区反馈，持续添加功能
 
@@ -52,30 +58,6 @@ const install = require("@qc2168/vite-plugin-utools").install
 // 添加编译后的preload文件
 install(['./dist/preload.js', './dist/preload2.js'])
 ```
-
-### 如何启动插件
-
-在`utools`中，打开`utools`开发者工具，并新建一个项目
-
-根据您的实际情况，填写插件所需信息
-
-![20231110155724](https://raw.githubusercontent.com/QC2168/note-img/main/20231110155724.png)
-
-执行`dev`指令，生成`dist`文件夹，将文件路径选中`/dist/plugin.json`
-
-![20231110155834](https://raw.githubusercontent.com/QC2168/note-img/main/20231110155834.png)
-
-![20231110155947](https://raw.githubusercontent.com/QC2168/note-img/main/20231110155947.png)
-
-启动插件，并触发插件第一个关键字
-
-![20231110160045](https://raw.githubusercontent.com/QC2168/note-img/main/20231110160045.png)
-
-![20231110160101](https://raw.githubusercontent.com/QC2168/note-img/main/20231110160101.png)
-
-![20231110160121](https://raw.githubusercontent.com/QC2168/note-img/main/20231110160121.png)
-
-开始你的开发之旅吧~
 
 ## 🍭 最后
 
