@@ -3,11 +3,49 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
+ * @description 检查标签是否存在
+ * @param {string} tag 标签名
+ * @returns {boolean}
+ */
+function checkTagExists(tag) {
+  try {
+    execSync(`git rev-parse ${tag}`, { stdio: 'ignore' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * @description 删除本地和远程标签
+ * @param {string} tag 标签名
+ */
+function deleteTag(tag) {
+  try {
+    // 删除本地标签
+    execSync(`git tag -d ${tag}`, { stdio: 'inherit' });
+    // 删除远程标签
+    execSync(`git push origin :refs/tags/${tag}`, { stdio: 'inherit' });
+    console.log(`已删除已存在的标签 ${tag}`);
+  } catch (error) {
+    console.warn(`删除标签失败: ${error.message}`);
+  }
+}
+
+/**
  * @description 更新版本号
  * @param {string} version 新版本号
  */
 function updateVersion(version) {
   try {
+    const tag = `v${version}`;
+
+    // 检查标签是否存在
+    if (checkTagExists(tag)) {
+      console.log(`标签 ${tag} 已存在，正在删除...`);
+      deleteTag(tag);
+    }
+
     // 更新 package.json
     const packagePath = path.resolve(__dirname, '../package.json');
     const packageJson = require(packagePath);
@@ -31,12 +69,12 @@ function updateVersion(version) {
     }
 
     // 提交更改
-    execSync(`git commit -m "chore: 更新版本至 v${version}"`, { stdio: 'inherit' });
-    execSync(`git tag v${version}`, { stdio: 'inherit' });
+    execSync(`git commit -m "chore: 更新版本至 ${tag}"`, { stdio: 'inherit' });
+    execSync(`git tag ${tag}`, { stdio: 'inherit' });
     execSync('git push', { stdio: 'inherit' });
     execSync('git push --tags', { stdio: 'inherit' });
 
-    console.log(`成功更新版本至 v${version}`);
+    console.log(`成功更新版本至 ${tag}`);
   } catch (error) {
     console.error('更新版本失败:', error.message);
     process.exit(1);
