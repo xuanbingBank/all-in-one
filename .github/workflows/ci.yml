@@ -1,9 +1,12 @@
 name: CI/CD
 
-# 只在手动触发时运行
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: '版本号 (例如: 1.0.2)'
+        required: true
+        type: string
       environment:
         description: '选择环境'
         required: true
@@ -13,45 +16,75 @@ on:
         - production
         - staging
         - development
-      debug:
-        description: '是否开启调试模式'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
-  test-and-build:
+  build-and-release:
     runs-on: ubuntu-latest
     
     steps:
       - name: 检出代码
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       
       - name: 设置 pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-          run_install: false
       
       - name: 设置 Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: 获取 pnpm store 目录
+        id: pnpm-cache
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: 设置 pnpm 缓存
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
       
       - name: 安装依赖
+        run: pnpm install
+      
+      - name: 更新版本号
         run: |
-          pnpm install --no-frozen-lockfile
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add package.json
+          git commit -m "chore: release v${{ github.event.inputs.version }}"
+          git tag "v${{ github.event.inputs.version }}"
       
       - name: 构建
         run: pnpm build
         env:
           NODE_ENV: ${{ github.event.inputs.environment }}
       
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v3
+      - name: 创建 Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: dist-${{ github.event.inputs.environment }}
-          path: |
-            dist/
-            release/
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release v${{ github.event.inputs.version }}
+          files: |
+            dist/*.upx
+            release/**/*.exe
+            release/**/*.dmg
+            release/**/*.AppImage
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 推送更改
+        run: |
+          git push
+          git push --tags
