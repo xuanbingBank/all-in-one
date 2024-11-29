@@ -153,10 +153,15 @@ onUnmounted(() => {
         <h3>数据管理</h3>
         <div class="setting-item">
           <button class="action-btn" @click="exportSettings">导出设置</button>
-          <label class="action-btn import-btn">
+          <button class="action-btn import-btn">
             导入设置
-            <input type="file" accept=".json" @change="importSettings" style="display: none;">
-          </label>
+            <input 
+              type="file" 
+              accept=".json" 
+              @change="importSettings" 
+              class="import-input"
+            >
+          </button>
         </div>
       </div>
 
@@ -174,7 +179,7 @@ onUnmounted(() => {
       </div>
 
       <div class="actions">
-        <button class="save-btn" @click="saveSettings">保存设置</button>
+        <button class="action-btn" @click="saveSettings">保存设置</button>
       </div>
     </template>
     
@@ -237,6 +242,17 @@ input[type="checkbox"] {
 }
 
 .import-btn {
-  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 </style> 

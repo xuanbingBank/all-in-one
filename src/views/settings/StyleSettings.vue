@@ -240,8 +240,8 @@ onMounted(() => {
     </div>
 
     <div class="actions">
-      <button class="reset-btn" @click="resetStyleSettings">重置</button>
-      <button class="save-btn" @click="saveStyleSettings">保存</button>
+      <button class="action-btn" @click="resetStyleSettings">重置</button>
+      <button class="action-btn" @click="saveStyleSettings">保存</button>
     </div>
   </div>
 </template>
@@ -299,42 +299,12 @@ input[type="color"]:hover {
   transform: scale(1.05);
 }
 
-.save-btn, .reset-btn {
-  padding: var(--spacing-md) var(--spacing-xl);
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-size: var(--font-md);
-  font-weight: var(--font-medium);
-  min-width: 100px;
-  transition: all var(--transition-fast);
-}
-
-.save-btn {
-  background-color: var(--primary-color);
-  color: var(--text-inverse);
-}
-
-.save-btn:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-}
-
-.reset-btn {
-  background-color: var(--bg-tertiary);
-  color: var(--text-secondary);
-}
-
-.reset-btn:hover {
-  background-color: var(--bg-disabled);
-  transform: translateY(-2px);
-}
-
-/* 添加过渡效果 */
+/* 添加过渡效��� */
 .content-section,
 .settings-group,
 .setting-item,
 input {
   transition: all var(--transition-normal);
 }
+
 </style> 

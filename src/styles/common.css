@@ -1,3 +1,129 @@
+/* CSS变量定义 */
+:root {
+  --primary-color: #4299e1;
+  --primary-hover: #3182ce;
+  --secondary-color: #2c3e50;
+  --success-color: #48bb78;
+  --warning-color: #ecc94b;
+  --danger-color: #f56565;
+  --info-color: #4299e1;
+
+  --text-primary: #2c3e50;
+  --text-secondary: #4a5568;
+  --text-disabled: #a0aec0;
+  --text-placeholder: #718096;
+  --text-inverse: #ffffff;
+
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7fafc;
+  --bg-tertiary: #edf2f7;
+  --bg-disabled: #e2e8f0;
+  --bg-hover: #f8fafc;
+  --bg-active: #ebf4ff;
+
+  --border-color: #e2e8f0;
+  --border-hover: #cbd5e0;
+  --border-active: #4299e1;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+
+  --font-xs: 12px;
+  --font-sm: 14px;
+  --font-md: 16px;
+  --font-lg: 18px;
+  --font-xl: 20px;
+  --font-2xl: 24px;
+
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  --transition-fast: 0.15s;
+  --transition-normal: 0.3s;
+  --transition-slow: 0.5s;
+
+  --header-height: 60px;
+  --footer-height: 60px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+
+  --menu-width: 200px;
+  --menu-bg-color: #2c3e50;
+  --menu-text-color: #ffffff;
+  --menu-active-color: #3498db;
+  --menu-hover-color: #34495e;
+  --content-bg-color: #f5f5f5;
+  --content-text-color: #2c3e50;
+
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 重置默认样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--content-bg-color);
+  color: var(--content-text-color);
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--content-bg-color);
+  color: var(--content-text-color);
+}
+
+/* 链接样式 */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
 /* 内容区域通用样式 */
 .content-section {
   height: 100%;
@@ -62,6 +188,25 @@ h4 {
   justify-content: flex-end;
   gap: var(--spacing-md);
   margin-top: var(--spacing-2xl);
+}
+
+/* 通用按钮基础样式 */
+.action-btn, .save-btn, .reset-btn {
+  padding: var(--spacing-md) var(--spacing-xl);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-md);
+  font-weight: var(--font-medium);
+  min-width: 100px;
+  transition: all var(--transition-fast);
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+}
+
+.action-btn:hover, .save-btn:hover, .reset-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
 }
 
 /* 加载状态通用样式 */
