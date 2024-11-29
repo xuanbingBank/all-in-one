@@ -1,31 +1,31 @@
 {
-	"logo": "logo.png",
-	"preload": "preload.js",
-	"name": "all-in-one",
-	"version": "1.0.1",
-	"pluginName": "all-in-one",
-	"description": "一个啥都有的小插件",
-	"author": "玄冰",
-	"homepage": "https://github.com/xunbingBank",
-	"features": [
-		{
-			"code": "home",
-			"explain": "插件主页",
-			"icon": "icon/home.png",
-			"cmds": [
-				"主页",
-				"aio主页",
-				"all-in-one"
-			]
-		},
-		{
-			"code": "settings",
-			"explain": "插件设置",
-			"icon": "icon/settings.png",
-			"cmds": [
-				"设置",
-				"aio设置"
-			]
-		}
-	]
+  "logo": "logo.png",
+  "preload": "preload.js",
+  "name": "all-in-one",
+  "version": "1.0.2",
+  "pluginName": "all-in-one",
+  "description": "一个啥都有的小插件",
+  "author": "玄冰",
+  "homepage": "https://github.com/xunbingBank",
+  "features": [
+    {
+      "code": "home",
+      "explain": "插件主页",
+      "icon": "icon/home.png",
+      "cmds": [
+        "主页",
+        "aio主页",
+        "all-in-one"
+      ]
+    },
+    {
+      "code": "settings",
+      "explain": "插件设置",
+      "icon": "icon/settings.png",
+      "cmds": [
+        "设置",
+        "aio设置"
+      ]
+    }
+  ]
 }
