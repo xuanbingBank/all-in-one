@@ -10,13 +10,12 @@
 📄 license: 更新许可证
 💄 style: UI/样式更新
 🎨 style: 代码格式化
-🔧 chore: 构建过程或辅助工具的变动
 📦 build: 打包构建
 🔨 build: 开发工具相关
 🎉 init: 初始化项目
 🚀 deploy: 部署相关
 📦 assets: 添加项目图标资源
-🔧 chore: 更新
+🔧 chore: 构建过程、辅助工具的变动、更新
 ⏪ revert: 回退代码
 🔥 remove: 删除代码/文件
 🚧 wip: 开发中
