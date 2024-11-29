@@ -33,7 +33,19 @@ const saveSettings = () => {
  * @description 导出设置
  */
 const exportSettings = () => {
-  const data = JSON.stringify(settings.value, null, 2)
+  // 获取所有设置数据
+  const allSettings = {
+    // 基础设置
+    settings: settings.value,
+    // 自定义样式设置
+    customStyle: window.utools?.dbStorage.getItem('customStyle'),
+    // 导出时间
+    exportTime: new Date().toISOString(),
+    // 版本信息
+    version: version
+  }
+
+  const data = JSON.stringify(allSettings, null, 2)
   const blob = new Blob([data], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -56,10 +68,23 @@ const importSettings = (event: Event) => {
   reader.onload = (e) => {
     try {
       const data = JSON.parse(e.target?.result as string)
-      settings.value = data
-      saveSettings()
+      
+      // 导入基础设置
+      if (data.settings) {
+        settings.value = data.settings
+        window.utools?.dbStorage.setItem('settings', data.settings)
+      }
+      
+      // 导入自定义样式设置
+      if (data.customStyle) {
+        window.utools?.dbStorage.setItem('customStyle', data.customStyle)
+        // 触发样式更新事件
+        window.dispatchEvent(new CustomEvent('styleChanged', { detail: data.customStyle }))
+      }
+      
       window.utools?.showNotification('设置导入成功')
     } catch (error) {
+      console.error('导入设置失败:', error)
       window.utools?.showNotification('设置导入失败：无效的配置文件')
     }
   }
@@ -153,10 +178,15 @@ onUnmounted(() => {
         <h3>数据管理</h3>
         <div class="setting-item">
           <button class="action-btn" @click="exportSettings">导出设置</button>
-          <label class="action-btn import-btn">
+          <button class="action-btn import-btn">
             导入设置
-            <input type="file" accept=".json" @change="importSettings" style="display: none;">
-          </label>
+            <input 
+              type="file" 
+              accept=".json" 
+              @change="importSettings" 
+              class="import-input"
+            >
+          </button>
         </div>
       </div>
 
@@ -174,7 +204,7 @@ onUnmounted(() => {
       </div>
 
       <div class="actions">
-        <button class="save-btn" @click="saveSettings">保存设置</button>
+        <button class="action-btn" @click="saveSettings">保存设置</button>
       </div>
     </template>
     
@@ -237,6 +267,17 @@ input[type="checkbox"] {
 }
 
 .import-btn {
-  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 </style> 
