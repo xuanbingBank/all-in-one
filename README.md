@@ -24,7 +24,7 @@
 ### 🔗 克隆项目
 
 ```bash
-git clone https://github.com/QC2168/utools-plugin-template.git
+git clone https://github.com/xuanbingBank/all-in-one.git
 ```
 
 ### 🔧 安装依赖
