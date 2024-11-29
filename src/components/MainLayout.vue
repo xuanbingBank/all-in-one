@@ -85,12 +85,21 @@ const menuItems: MenuItem[] = [
     component: SettingsView,
     children: [
       {
+        title: '基础设置',
+        icon: '🔧',
+        action: () => {
+          currentView.value = 'settings'
+          window.dispatchEvent(new CustomEvent('showGeneralSettings'))
+          expandedMenu.value = null
+        }
+      },
+      {
         title: '自定义样式',
         icon: '🎨',
         action: () => {
           currentView.value = 'settings'
           window.dispatchEvent(new CustomEvent('showStyleSettings'))
-          expandedMenu.value = null // 关闭子菜单
+          expandedMenu.value = null
         }
       },
       {
@@ -119,12 +128,22 @@ const menuItems: MenuItem[] = [
  * @description 切换菜单
  */
 const handleMenuClick = (path: ViewType) => {
-  if (expandedMenu.value === path) {
-    expandedMenu.value = null
-  } else {
-    expandedMenu.value = path
+  // 获取当前点击的菜单项
+  const menuItem = menuItems.find(item => item.path === path)
+  
+  // 如果有子菜单，只处理展开/折叠
+  if (menuItem?.children?.length) {
+    if (expandedMenu.value === path) {
+      expandedMenu.value = null
+    } else {
+      expandedMenu.value = path
+    }
+    return
   }
+  
+  // 没有子菜单才切换视图
   currentView.value = path
+  expandedMenu.value = null
 }
 
 /**
