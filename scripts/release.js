@@ -10,17 +10,17 @@ function updateVersion(version) {
   try {
     const tag = `v${version}`;
 
-    // 先提交未暂存的更改
-    const status = execSync('git status --porcelain').toString();
-    if (status) {
-      console.log('提交未暂存的更改...');
-      execSync('git add .', { stdio: 'inherit' });
-      execSync('git commit -m "chore: 提交未暂存的更改"', { stdio: 'inherit' });
-    }
-
     // 更新 package.json
     const packagePath = path.resolve(__dirname, '../package.json');
     const packageJson = require(packagePath);
+    
+    // 检查版本是否需要更新
+    if (packageJson.version === version) {
+      console.log(`版本已经是 ${version}，无需更新`);
+      return;
+    }
+    
+    // 更新版本号
     packageJson.version = version;
     fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n');
 
@@ -32,6 +32,15 @@ function updateVersion(version) {
 
     // 提交版本更新
     execSync('git add package.json plugin.json', { stdio: 'inherit' });
+    
+    // 检查是否有改动需要提交
+    const status = execSync('git status --porcelain').toString();
+    if (!status) {
+      console.log('没有检测到文件更改，可能版本号已经更新');
+      return;
+    }
+
+    // 提交更改
     execSync(`git commit -m "chore: 更新版本至 ${tag}"`, { stdio: 'inherit' });
     
     // 创建标签
@@ -44,16 +53,14 @@ function updateVersion(version) {
     
     execSync(`git tag ${tag}`, { stdio: 'inherit' });
     
-    // 推送所有更改
+    // 推送更改
     console.log('推送更改到远程仓库...');
     execSync('git push', { stdio: 'inherit' });
     execSync('git push --tags', { stdio: 'inherit' });
 
-    // 触发 GitHub Actions
-    console.log('触发 GitHub Actions...');
-    execSync(`gh workflow run CI/CD -f version=${version} -f environment=production`, { stdio: 'inherit' });
-
-    console.log(`成功更新版本至 ${tag} 并触发 CI/CD`);
+    console.log(`成功更新版本至 ${tag}`);
+    console.log('请手动前往 GitHub Actions 页面触发构建');
+    console.log(`https://github.com/xuanbingBank/all-in-one/actions`);
   } catch (error) {
     console.error('更新版本失败:', error.message);
     process.exit(1);
@@ -73,6 +80,5 @@ if (!versionRegex.test(version)) {
   console.error('版本号格式错误，应为 x.y.z');
   process.exit(1);
 }
-
 
 updateVersion(version); 
