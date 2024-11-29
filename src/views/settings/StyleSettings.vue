@@ -174,68 +174,74 @@ onMounted(() => {
   <div class="content-section">
     <h3>自定义样式设置</h3>
     
-    <div class="settings-group">
-      <h4>菜单样式</h4>
-      <div class="setting-item">
-        <label>菜单宽度</label>
-        <div class="input-with-unit">
-          <input 
-            type="number" 
-            v-model.number="customStyle.menuWidth"
-            min="120"
-            max="500"
-            step="10"
-            @input="handleWidthInput"
-            readonly
-          >
-          <div class="number-controls">
-            <button class="control-btn" @click="adjustWidth('decrease')">-</button>
-            <button class="control-btn" @click="adjustWidth('increase')">+</button>
+    <div class="settings-container">
+      <div class="settings-group">
+        <h4>菜单样式</h4>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label>菜单宽度</label>
+            <div class="input-with-unit">
+              <input 
+                type="number" 
+                v-model.number="customStyle.menuWidth"
+                min="120"
+                max="500"
+                step="10"
+                @input="handleWidthInput"
+                readonly
+              >
+              <div class="number-controls">
+                <button class="control-btn" @click="adjustWidth('decrease')">-</button>
+                <button class="control-btn" @click="adjustWidth('increase')">+</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="setting-item">
+            <label>菜单背景色</label>
+            <input 
+              type="color" 
+              v-model="customStyle.menuBgColor"
+            >
+          </div>
+          
+          <div class="setting-item">
+            <label>菜单文字颜色</label>
+            <input 
+              type="color" 
+              v-model="customStyle.menuTextColor"
+            >
+          </div>
+          
+          <div class="setting-item">
+            <label>菜单激活色</label>
+            <input 
+              type="color" 
+              v-model="customStyle.menuActiveColor"
+            >
           </div>
         </div>
       </div>
-      
-      <div class="setting-item">
-        <label>菜单背景色</label>
-        <input 
-          type="color" 
-          v-model="customStyle.menuBgColor"
-        >
-      </div>
-      
-      <div class="setting-item">
-        <label>菜单文字颜色</label>
-        <input 
-          type="color" 
-          v-model="customStyle.menuTextColor"
-        >
-      </div>
-      
-      <div class="setting-item">
-        <label>菜单激活色</label>
-        <input 
-          type="color" 
-          v-model="customStyle.menuActiveColor"
-        >
-      </div>
-    </div>
 
-    <div class="settings-group">
-      <h4>内容区样式</h4>
-      <div class="setting-item">
-        <label>内容区背景颜色</label>
-        <input 
-          type="color" 
-          v-model="customStyle.contentBgColor"
-        >
-      </div>
-      
-      <div class="setting-item">
-        <label>文字颜色</label>
-        <input 
-          type="color" 
-          v-model="customStyle.contentTextColor"
-        >
+      <div class="settings-group">
+        <h4>内容区样式</h4>
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label>内容区背景颜色</label>
+            <input 
+              type="color" 
+              v-model="customStyle.contentBgColor"
+            >
+          </div>
+          
+          <div class="setting-item">
+            <label>文字颜色</label>
+            <input 
+              type="color" 
+              v-model="customStyle.contentTextColor"
+            >
+          </div>
+        </div>
       </div>
     </div>
 
@@ -247,6 +253,37 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.settings-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  max-width: 300px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.setting-item label {
+  min-width: unset;
+  margin-right: 0;
+  margin-bottom: var(--spacing-xs);
+}
+
 .input-with-unit {
   display: flex;
   align-items: center;
@@ -286,8 +323,8 @@ input[type="number"] {
 }
 
 input[type="color"] {
-  width: 50px;
-  height: 30px;
+  width: 100%;
+  height: 40px;
   padding: 0;
   border: none;
   border-radius: var(--radius-sm);
@@ -296,15 +333,14 @@ input[type="color"] {
 }
 
 input[type="color"]:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
 }
 
-/* 添加过渡效��� */
+/* 添加过渡效果 */
 .content-section,
 .settings-group,
 .setting-item,
 input {
   transition: all var(--transition-normal);
 }
-
 </style> 
