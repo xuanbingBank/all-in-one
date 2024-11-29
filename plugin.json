@@ -9,10 +9,20 @@
 	"homepage": "https://github.com/QC2168",
 	"features": [
 		{
-			"code": "template",
-			"explain": "插件模板主界面",
+			"code": "home",
+			"explain": "插件主页",
 			"cmds": [
-				"template"
+				"主页",
+				"aio主页",
+				"all-in-one"
+			]
+		},
+		{
+			"code": "settings",
+			"explain": "插件设置",
+			"cmds": [
+				"设置",
+				"aio设置"
 			]
 		}
 	]
