@@ -15,16 +15,19 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v3
       
+      - name: 设置 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
       - name: 设置 Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: 'pnpm'
       
       - name: 安装依赖
-        run: |
-          npm install -g pnpm
-          pnpm install
+        run: pnpm install --frozen-lockfile
       
       - name: 类型检查
         run: pnpm run vue-tsc --noEmit
