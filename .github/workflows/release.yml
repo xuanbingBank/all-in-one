@@ -13,22 +13,17 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v3
       
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-      
       - name: 设置 Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'pnpm'
+          cache: 'npm'
       
       - name: 安装依赖
-        run: pnpm install --frozen-lockfile
+        run: npm install
       
       - name: 构建
-        run: pnpm build
+        run: npm run build
       
       - name: 创建 Release
         id: create_release

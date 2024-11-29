@@ -12,7 +12,10 @@
     "build:electron": "vue-tsc && vite build  --mode=electron && electron-builder",
     "preview": "vite preview",
     "ci": "pnpm run vue-tsc --noEmit && pnpm build",
-    "release": "node scripts/release.js"
+    "release": "node scripts/release.js",
+    "ci:prod": "gh workflow run CI/CD -f environment=production",
+    "ci:dev": "gh workflow run CI/CD -f environment=development",
+    "ci:stage": "gh workflow run CI/CD -f environment=staging"
   },
   "dependencies": {
     "@qc2168/vite-plugin-utools": "^1.3.1",
