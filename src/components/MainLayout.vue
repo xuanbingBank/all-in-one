@@ -4,8 +4,9 @@ import { ref, shallowRef, watch, onMounted, onUnmounted, defineAsyncComponent } 
 // 使用懒加载导入组件
 const HomeView = defineAsyncComponent(() => import('../views/home/index.vue'))
 const SettingsView = defineAsyncComponent(() => import('../views/settings/index.vue'))
+const NotesView = defineAsyncComponent(() => import('../views/notes/index.vue'))
 
-type ViewType = 'home' | 'settings'
+type ViewType = 'home' | 'settings' | 'notes'
 
 /**
  * @description 菜单项接口
@@ -14,7 +15,7 @@ interface MenuItem {
   path: ViewType
   title: string
   icon: string
-  component: typeof HomeView | typeof SettingsView
+  component: typeof HomeView | typeof SettingsView | typeof NotesView
   children?: SubMenuItem[]
 }
 
@@ -59,6 +60,12 @@ const menuItems: MenuItem[] = [
     title: '首页',
     icon: '🏠',
     component: HomeView
+  },
+  {
+    path: 'notes',
+    title: '笔记',
+    icon: '📝',
+    component: NotesView
   },
   {
     path: 'settings',
@@ -192,7 +199,7 @@ onUnmounted(() => {
         <!-- 常规菜单项 -->
         <div class="menu-top">
           <div 
-            v-for="item in menuItems.filter((item: MenuItem) => item.path === 'home')" 
+            v-for="item in menuItems.filter((item: MenuItem) => item.path !== 'settings')" 
             :key="item.path"
           >
             <div
