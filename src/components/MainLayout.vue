@@ -379,7 +379,8 @@ onUnmounted(() => {
   height: 100%;
   padding: 20px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: var(--content-bg-color, #f5f5f5);
+  color: var(--content-text-color, #2c3e50);
 }
 
 .menu-item.expanded {

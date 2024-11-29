@@ -188,20 +188,21 @@ onUnmounted(() => {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--content-bg-color, #fff);
+  color: var(--content-text-color, #2c3e50);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
 }
 
 h2 {
-  color: #2c3e50;
+  color: var(--content-text-color, #2c3e50);
   margin-bottom: 24px;
   font-size: 24px;
 }
 
 h3 {
-  color: #2c3e50;
+  color: var(--content-text-color, #2c3e50);
   margin: 16px 0;
   font-size: 18px;
 }
@@ -209,7 +210,8 @@ h3 {
 .settings-group {
   margin-bottom: 32px;
   padding: 16px;
-  background-color: #f8f9fa;
+  background-color: var(--content-bg-color, #f8f9fa);
+  filter: brightness(0.98);
   border-radius: 6px;
 }
 
@@ -223,7 +225,7 @@ h3 {
 
 .setting-item label {
   min-width: 120px;
-  color: #4a5568;
+  color: var(--content-text-color, #4a5568);
 }
 
 select, input[type="text"] {
@@ -239,7 +241,7 @@ input[type="checkbox"] {
 }
 
 .about-info {
-  color: #4a5568;
+  color: var(--content-text-color, #4a5568);
   line-height: 1.6;
 }
 
