@@ -1,0 +1,95 @@
+/* 内容区域通用样式 */
+.content-section {
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* 标题通用样式 */
+h1, h2, h3, h4 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+h1 {
+  font-size: var(--font-2xl);
+}
+
+h2 {
+  font-size: var(--font-xl);
+}
+
+h3 {
+  font-size: var(--font-lg);
+}
+
+h4 {
+  font-size: var(--font-md);
+}
+
+/* 设置组通用样式 */
+.settings-group {
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 设置项通用样式 */
+.setting-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.setting-item label {
+  min-width: 120px;
+  margin-right: var(--spacing-lg);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
+}
+
+/* 按钮组通用样式 */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-2xl);
+}
+
+/* 加载状态通用样式 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: var(--font-md);
+}
+
+@keyframes loading-dots {
+  0%, 20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%, 100% {
+    content: '...';
+  }
+}
+
+.loading-text::after {
+  content: '';
+  animation: loading-dots 1.5s infinite;
+} 

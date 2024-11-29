@@ -171,7 +171,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="style-settings-page">
+  <div class="content-section">
     <h3>自定义样式设置</h3>
     
     <div class="settings-group">
@@ -247,54 +247,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.style-settings-page {
-  padding: var(--spacing-xl);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-}
-
-.settings-group {
-  margin-bottom: var(--spacing-2xl);
-  padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-h3, h4 {
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-lg);
-  font-size: var(--font-lg);
-  font-weight: var(--font-semibold);
-}
-
-h4 {
-  font-size: var(--font-md);
-}
-
-.setting-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-}
-
-.setting-item label {
-  min-width: 120px;
-  margin-right: var(--spacing-lg);
-  color: var(--text-secondary);
-  font-size: var(--font-sm);
-}
-
 .input-with-unit {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-}
-
-.unit {
-  margin-left: var(--spacing-sm);
-  color: var(--text-secondary);
-  font-size: var(--font-sm);
 }
 
 input[type="number"] {
@@ -343,13 +299,6 @@ input[type="color"]:hover {
   transform: scale(1.05);
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-2xl);
-}
-
 .save-btn, .reset-btn {
   padding: var(--spacing-md) var(--spacing-xl);
   border: none;
@@ -382,7 +331,7 @@ input[type="color"]:hover {
 }
 
 /* 添加过渡效果 */
-.style-settings-page,
+.content-section,
 .settings-group,
 .setting-item,
 input {

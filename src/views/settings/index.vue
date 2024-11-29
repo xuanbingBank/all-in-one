@@ -194,50 +194,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.content-section {
-  height: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-}
-
-h2 {
-  color: var(--text-primary);
-  margin-bottom: 24px;
-  font-size: 24px;
-}
-
-h3 {
-  color: var(--text-primary);
-  margin: 16px 0;
-  font-size: 18px;
-}
-
-.settings-group {
-  margin-bottom: 32px;
-  padding: 16px;
-  background-color: var(--bg-secondary);
-  border-radius: 6px;
-}
-
-.setting-item {
-  margin: 16px 0;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.setting-item label {
-  min-width: 120px;
-  color: var(--text-secondary);
-}
-
 select, input[type="text"] {
   padding: 8px 12px;
   border: 1px solid #e2e8f0;
@@ -264,26 +220,6 @@ input[type="checkbox"] {
   text-decoration: underline;
 }
 
-.actions {
-  margin-top: 24px;
-  text-align: right;
-}
-
-.save-btn {
-  background-color: #4299e1;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.save-btn:hover {
-  background-color: #3182ce;
-}
-
 .action-btn {
   background-color: #4299e1;
   color: white;
@@ -302,35 +238,5 @@ input[type="checkbox"] {
 
 .import-btn {
   display: inline-block;
-}
-
-/* 添加加载状态样式 */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px;
-}
-
-.loading-text {
-  color: #666;
-  font-size: 16px;
-}
-
-@keyframes loading-dots {
-  0%, 20% {
-    content: '.';
-  }
-  40% {
-    content: '..';
-  }
-  60%, 100% {
-    content: '...';
-  }
-}
-
-.loading-text::after {
-  content: '';
-  animation: loading-dots 1.5s infinite;
 }
 </style> 
