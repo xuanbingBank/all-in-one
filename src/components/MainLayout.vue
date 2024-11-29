@@ -4,8 +4,9 @@ import { ref, shallowRef, watch, onMounted, onUnmounted, defineAsyncComponent } 
 // 使用懒加载导入组件
 const HomeView = defineAsyncComponent(() => import('../views/home/index.vue'))
 const SettingsView = defineAsyncComponent(() => import('../views/settings/index.vue'))
+const NotesView = defineAsyncComponent(() => import('../views/notes/index.vue'))
 
-type ViewType = 'home' | 'settings'
+type ViewType = 'home' | 'settings' | 'notes'
 
 /**
  * @description 菜单项接口
@@ -14,7 +15,7 @@ interface MenuItem {
   path: ViewType
   title: string
   icon: string
-  component: typeof HomeView | typeof SettingsView
+  component: typeof HomeView | typeof SettingsView | typeof NotesView
   children?: SubMenuItem[]
 }
 
@@ -58,25 +59,13 @@ const menuItems: MenuItem[] = [
     path: 'home',
     title: '首页',
     icon: '🏠',
-    component: HomeView,
-    children: [
-      {
-        title: '快速开始',
-        icon: '⚡',
-        action: () => {
-          currentView.value = 'home'
-          window.utools?.showNotification('快速开始')
-        }
-      },
-      {
-        title: '最近使用',
-        icon: '🕒',
-        action: () => {
-          currentView.value = 'home'
-          window.utools?.showNotification('最近使用')
-        }
-      }
-    ]
+    component: HomeView
+  },
+  {
+    path: 'notes',
+    title: '笔记',
+    icon: '📝',
+    component: NotesView
   },
   {
     path: 'settings',
@@ -85,12 +74,23 @@ const menuItems: MenuItem[] = [
     component: SettingsView,
     children: [
       {
+        title: '基础设置',
+        icon: '🔧',
+        action: () => {
+          currentView.value = 'settings'
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showGeneralSettings'))
+          }, 0)
+        }
+      },
+      {
         title: '自定义样式',
         icon: '🎨',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('showStyleSettings'))
-          expandedMenu.value = null // 关闭子菜单
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showStyleSettings'))
+          }, 0)
         }
       },
       {
@@ -98,8 +98,9 @@ const menuItems: MenuItem[] = [
         icon: '📥',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('importSettings'))
-          expandedMenu.value = null
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('importSettings'))
+          }, 0)
         }
       },
       {
@@ -107,8 +108,9 @@ const menuItems: MenuItem[] = [
         icon: '📤',
         action: () => {
           currentView.value = 'settings'
-          window.dispatchEvent(new CustomEvent('exportSettings'))
-          expandedMenu.value = null
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('exportSettings'))
+          }, 0)
         }
       }
     ]
@@ -119,12 +121,22 @@ const menuItems: MenuItem[] = [
  * @description 切换菜单
  */
 const handleMenuClick = (path: ViewType) => {
-  if (expandedMenu.value === path) {
-    expandedMenu.value = null
-  } else {
-    expandedMenu.value = path
+  // 获取当前点击的菜单项
+  const menuItem = menuItems.find(item => item.path === path)
+  
+  // 如果有子菜单，只处理展开
+  if (menuItem?.children?.length) {
+    // 如果点击的不是当前展开的菜单，则展开新菜单
+    if (expandedMenu.value !== path) {
+      expandedMenu.value = path
+    }
+    // 移除折叠逻辑，保持子菜单展开状态
+    return
   }
+  
+  // 没有子菜单才切换视图
   currentView.value = path
+  expandedMenu.value = null
 }
 
 /**
@@ -187,7 +199,7 @@ onUnmounted(() => {
         <!-- 常规菜单项 -->
         <div class="menu-top">
           <div 
-            v-for="item in menuItems.filter((item: MenuItem) => item.path === 'home')" 
+            v-for="item in menuItems.filter((item: MenuItem) => item.path !== 'settings')" 
             :key="item.path"
           >
             <div

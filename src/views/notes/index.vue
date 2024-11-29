@@ -4,6 +4,6 @@
 
 <template>
   <div class="content-section">
-    <h1>首页</h1>
+    <h1>笔记</h1>
   </div>
 </template> 

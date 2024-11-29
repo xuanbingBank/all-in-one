@@ -1,13 +1,4 @@
 /**
- * @description 系统版本信息
- */
-window.versions = {
-  node: () => process.versions.node || '',
-  chrome: () => process.versions.chrome || '',
-  electron: () => process.versions.electron || '',
-};
-
-/**
  * @description 初始视图
  */
 window.initialView = 'home'
