@@ -2,7 +2,7 @@
   "name": "all-in-one",
   "private": true,
   "main": "dist-electron/main/index.js",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "author": "xuanbing",
   "description": "一个啥都有的小插件",
   "scripts": {
