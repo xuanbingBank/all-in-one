@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 /**
  * @description 自定义样式数据
@@ -23,33 +23,96 @@ const customStyle = ref<CustomStyle>({
 })
 
 /**
- * @description 保存样式设置
- */
-const saveStyleSettings = () => {
-  window.utools?.dbStorage.setItem('customStyle', customStyle.value)
-  applyCustomStyle()
-  window.utools?.showNotification('样式设置已保存')
-}
-
-/**
  * @description 应用自定义样式
  */
 const applyCustomStyle = () => {
   const style = customStyle.value
   const root = document.documentElement
   
-  // 设置菜单宽度
+  // 设置CSS变量
   root.style.setProperty('--menu-width', `${style.menuWidth}px`)
-  
-  // 设置菜单颜色
   root.style.setProperty('--menu-bg-color', style.menuBgColor)
   root.style.setProperty('--menu-text-color', style.menuTextColor)
   root.style.setProperty('--menu-active-color', style.menuActiveColor)
-  root.style.setProperty('--menu-hover-color', style.menuBgColor + 'dd') // 添加悬浮颜色
-  
-  // 设置内容区颜色
+  root.style.setProperty('--menu-hover-color', adjustColor(style.menuBgColor, -10))
   root.style.setProperty('--content-bg-color', style.contentBgColor)
   root.style.setProperty('--content-text-color', style.contentTextColor)
+
+  // 直接应用到主内容区
+  const mainContent = document.querySelector('.main-content') as HTMLElement
+  if (mainContent) {
+    mainContent.style.backgroundColor = style.contentBgColor
+    mainContent.style.color = style.contentTextColor
+  }
+
+  // 应用到设置组件
+  const settingsGroups = document.querySelectorAll('.settings-group') as NodeListOf<HTMLElement>
+  settingsGroups.forEach(group => {
+    group.style.backgroundColor = adjustColor(style.contentBgColor, 10)
+    group.style.color = style.contentTextColor
+  })
+
+  // 应用到标签文本
+  const labels = document.querySelectorAll('.setting-item label') as NodeListOf<HTMLElement>
+  labels.forEach(label => {
+    label.style.color = style.contentTextColor
+  })
+
+  // 应用到整个应用
+  document.body.style.backgroundColor = style.contentBgColor
+  document.body.style.color = style.contentTextColor
+}
+
+/**
+ * @description 调整颜色亮度
+ */
+const adjustColor = (color: string, amount: number): string => {
+  const clamp = (num: number) => Math.min(255, Math.max(0, num))
+  
+  // 移除 # 号并转换为 RGB
+  const hex = color.replace('#', '')
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+  
+  // 调整亮度
+  const newR = clamp(r + amount)
+  const newG = clamp(g + amount)
+  const newB = clamp(b + amount)
+  
+  // 转回 hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`
+}
+
+/**
+ * @description 保存样式设置
+ */
+const saveStyleSettings = () => {
+  try {
+    // 创建一个普通对象而不是响应式对象
+    const styleToSave = {
+      menuWidth: customStyle.value.menuWidth,
+      menuBgColor: customStyle.value.menuBgColor,
+      menuTextColor: customStyle.value.menuTextColor,
+      menuActiveColor: customStyle.value.menuActiveColor,
+      contentBgColor: customStyle.value.contentBgColor,
+      contentTextColor: customStyle.value.contentTextColor
+    }
+    
+    // 先应用样式
+    applyCustomStyle()
+    
+    // 保存普通对象到数据库
+    window.utools?.dbStorage.setItem('customStyle', styleToSave)
+    
+    // 触发全局样式更新事件
+    window.dispatchEvent(new CustomEvent('styleChanged', { detail: styleToSave }))
+    
+    window.utools?.showNotification('样式设置已保存')
+  } catch (error) {
+    console.error('保存样式设置失败:', error)
+    window.utools?.showNotification('保存失败，请重试')
+  }
 }
 
 /**
@@ -67,12 +130,25 @@ const resetStyleSettings = () => {
   saveStyleSettings()
 }
 
-onMounted(() => {
+/**
+ * @description 初始化样式
+ */
+const initStyle = () => {
   const savedStyle = window.utools?.dbStorage.getItem('customStyle')
   if (savedStyle) {
     customStyle.value = { ...customStyle.value, ...savedStyle }
   }
   applyCustomStyle()
+}
+
+// 监听样式变化实时预览
+watch(() => customStyle.value, () => {
+  applyCustomStyle()
+}, { deep: true })
+
+// 组件挂载时初始化样式
+onMounted(() => {
+  initStyle()
 })
 </script>
 
@@ -148,31 +224,39 @@ onMounted(() => {
 
 <style scoped>
 .style-settings {
-  padding: 20px;
+  padding: var(--spacing-xl);
 }
 
 .settings-group {
-  margin-bottom: 24px;
-  padding: 16px;
-  background-color: #f8f9fa;
-  border-radius: 6px;
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+h3, h4 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-lg);
+  font-weight: var(--font-semibold);
 }
 
 h4 {
-  margin-bottom: 16px;
-  color: #2d3748;
+  font-size: var(--font-md);
 }
 
 .setting-item {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .setting-item label {
   min-width: 120px;
-  margin-right: 16px;
-  color: #4a5568;
+  margin-right: var(--spacing-lg);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
 }
 
 .input-with-unit {
@@ -181,15 +265,27 @@ h4 {
 }
 
 .unit {
-  margin-left: 8px;
-  color: #718096;
+  margin-left: var(--spacing-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-sm);
 }
 
 input[type="number"] {
   width: 80px;
-  padding: 4px 8px;
-  border: 1px solid #e2e8f0;
-  border-radius: 4px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  transition: border-color var(--transition-fast);
+}
+
+input[type="number"]:hover {
+  border-color: var(--border-hover);
+}
+
+input[type="number"]:focus {
+  border-color: var(--border-active);
+  outline: none;
 }
 
 input[type="color"] {
@@ -197,41 +293,55 @@ input[type="color"] {
   height: 30px;
   padding: 0;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+input[type="color"]:hover {
+  transform: scale(1.05);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-2xl);
 }
 
 .save-btn, .reset-btn {
-  padding: 8px 16px;
+  padding: var(--spacing-sm) var(--spacing-lg);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
+  transition: background-color var(--transition-fast);
 }
 
 .save-btn {
-  background-color: #4299e1;
-  color: white;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
 }
 
 .save-btn:hover {
-  background-color: #3182ce;
+  background-color: var(--primary-hover);
 }
 
 .reset-btn {
-  background-color: #e2e8f0;
-  color: #4a5568;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
 }
 
 .reset-btn:hover {
-  background-color: #cbd5e0;
+  background-color: var(--bg-disabled);
+}
+
+/* 添加过渡效果 */
+.style-settings,
+.settings-group,
+.setting-item,
+input {
+  transition: all var(--transition-normal);
 }
 </style> 
