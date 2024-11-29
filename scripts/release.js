@@ -3,56 +3,6 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
- * @description 统一文件的行尾符为 LF
- * @param {string} content 文件内容
- * @returns {string}
- */
-function normalizeLineEndings(content) {
-  return content.replace(/\r\n/g, '\n');
-}
-
-/**
- * @description 写入文件并确保使用 LF 行尾符
- * @param {string} filePath 文件路径
- * @param {object} content 要写入的内容
- */
-function writeJsonWithLF(filePath, content) {
-  const jsonString = JSON.stringify(content, null, 2) + '\n';
-  const normalizedContent = normalizeLineEndings(jsonString);
-  fs.writeFileSync(filePath, normalizedContent, 'utf8');
-}
-
-/**
- * @description 检查标签是否存在
- * @param {string} tag 标签名
- * @returns {boolean}
- */
-function checkTagExists(tag) {
-  try {
-    execSync(`git rev-parse ${tag}`, { stdio: 'ignore' });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * @description 删除本地和远程标签
- * @param {string} tag 标签名
- */
-function deleteTag(tag) {
-  try {
-    // 删除本地标签
-    execSync(`git tag -d ${tag}`, { stdio: 'inherit' });
-    // 删除远程标签
-    execSync(`git push origin :refs/tags/${tag}`, { stdio: 'inherit' });
-    console.log(`已删除已存在的标签 ${tag}`);
-  } catch (error) {
-    console.warn(`删除标签失败: ${error.message}`);
-  }
-}
-
-/**
  * @description 更新版本号
  * @param {string} version 新版本号
  */
@@ -60,41 +10,50 @@ function updateVersion(version) {
   try {
     const tag = `v${version}`;
 
-    // 检查标签是否存在
-    if (checkTagExists(tag)) {
-      console.log(`标签 ${tag} 已存在，正在删除...`);
-      deleteTag(tag);
+    // 先提交未暂存的更改
+    const status = execSync('git status --porcelain').toString();
+    if (status) {
+      console.log('提交未暂存的更改...');
+      execSync('git add .', { stdio: 'inherit' });
+      execSync('git commit -m "chore: 提交未暂存的更改"', { stdio: 'inherit' });
     }
 
     // 更新 package.json
     const packagePath = path.resolve(__dirname, '../package.json');
     const packageJson = require(packagePath);
     packageJson.version = version;
-    writeJsonWithLF(packagePath, packageJson);
+    fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2) + '\n');
 
     // 更新 plugin.json
     const pluginPath = path.resolve(__dirname, '../plugin.json');
     const pluginJson = require(pluginPath);
     pluginJson.version = version;
-    writeJsonWithLF(pluginPath, pluginJson);
+    fs.writeFileSync(pluginPath, JSON.stringify(pluginJson, null, 2) + '\n');
 
-    // Git 操作
+    // 提交版本更新
     execSync('git add package.json plugin.json', { stdio: 'inherit' });
-    
-    // 检查是否有改动需要提交
-    const status = execSync('git status --porcelain').toString();
-    if (!status) {
-      console.log('没有需要提交的更改');
-      return;
-    }
-
-    // 提交更改
     execSync(`git commit -m "chore: 更新版本至 ${tag}"`, { stdio: 'inherit' });
+    
+    // 创建标签
+    try {
+      execSync(`git tag -d ${tag}`, { stdio: 'inherit' });
+      execSync(`git push origin :refs/tags/${tag}`, { stdio: 'inherit' });
+    } catch (e) {
+      // 忽略标签不存在的错误
+    }
+    
     execSync(`git tag ${tag}`, { stdio: 'inherit' });
+    
+    // 推送所有更改
+    console.log('推送更改到远程仓库...');
     execSync('git push', { stdio: 'inherit' });
     execSync('git push --tags', { stdio: 'inherit' });
 
-    console.log(`成功更新版本至 ${tag}`);
+    // 触发 GitHub Actions
+    console.log('触发 GitHub Actions...');
+    execSync(`gh workflow run CI/CD -f version=${version} -f environment=production`, { stdio: 'inherit' });
+
+    console.log(`成功更新版本至 ${tag} 并触发 CI/CD`);
   } catch (error) {
     console.error('更新版本失败:', error.message);
     process.exit(1);
@@ -112,6 +71,15 @@ if (!version) {
 const versionRegex = /^\d+\.\d+\.\d+$/;
 if (!versionRegex.test(version)) {
   console.error('版本号格式错误，应为 x.y.z');
+  process.exit(1);
+}
+
+// 检查 GitHub CLI 是否已登录
+try {
+  execSync('gh auth status', { stdio: 'ignore' });
+} catch (error) {
+  console.error('请先登录 GitHub CLI');
+  console.log('运行 "gh auth login" 进行登录');
   process.exit(1);
 }
 
