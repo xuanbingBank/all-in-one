@@ -66,8 +66,7 @@ jobs:
           tag_name: v${{ github.event.inputs.version }}
           name: Release v${{ github.event.inputs.version }}
           files: |
-            dist/*
-            release/**/*.*
+            upx/*.upx
           draft: false
           prerelease: false
           generate_release_notes: true
