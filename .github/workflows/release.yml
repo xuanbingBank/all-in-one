@@ -60,6 +60,62 @@ jobs:
         env:
           NODE_ENV: ${{ github.event.inputs.environment }}
       
+      - name: 获取变更日志
+        id: changelog
+        run: |
+          # 获取上一个版本的tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          
+          # 如果存在上一个tag,则获取从上一个tag到现在的commits
+          if [ ! -z "$LAST_TAG" ]; then
+            # 按不同类型获取commits并存储到变量
+            FEATURES=$(git log $LAST_TAG..HEAD --pretty=format:"%s" | grep "^✨ feat:" || true)
+            FIXES=$(git log $LAST_TAG..HEAD --pretty=format:"%s" | grep "^🐛 fix:" || true)
+            PERFS=$(git log $LAST_TAG..HEAD --pretty=format:"%s" | grep "^⚡️ perf:" || true)
+            DOCS=$(git log $LAST_TAG..HEAD --pretty=format:"%s" | grep "^📝 docs:" || true)
+            CHORES=$(git log $LAST_TAG..HEAD --pretty=format:"%s" | grep "^🔧 chore:" || true)
+          else
+            # 如果是第一个版本,则获取所有commits
+            FEATURES=$(git log --pretty=format:"%s" | grep "^✨ feat:" || true)
+            FIXES=$(git log --pretty=format:"%s" | grep "^🐛 fix:" || true)
+            PERFS=$(git log --pretty=format:"%s" | grep "^⚡️ perf:" || true)
+            DOCS=$(git log --pretty=format:"%s" | grep "^📝 docs:" || true)
+            CHORES=$(git log --pretty=format:"%s" | grep "^🔧 chore:" || true)
+          fi
+          
+          # 将commits格式化为markdown并存储到文件
+          {
+            echo "CHANGELOG<<EOF"
+            echo "## 更新内容"
+            echo ""
+            if [ ! -z "$FEATURES" ]; then
+              echo "### 新特性 ✨"
+              echo "$FEATURES" | sed 's/^✨ feat: /- /g'
+              echo ""
+            fi
+            if [ ! -z "$FIXES" ]; then
+              echo "### 修复 🐛"
+              echo "$FIXES" | sed 's/^🐛 fix: /- /g'
+              echo ""
+            fi
+            if [ ! -z "$PERFS" ]; then
+              echo "### 优化 ⚡️"
+              echo "$PERFS" | sed 's/^⚡️ perf: /- /g'
+              echo ""
+            fi
+            if [ ! -z "$DOCS" ]; then
+              echo "### 文档 📝"
+              echo "$DOCS" | sed 's/^📝 docs: /- /g'
+              echo ""
+            fi
+            if [ ! -z "$CHORES" ]; then
+              echo "### 其他 🔧"
+              echo "$CHORES" | sed 's/^🔧 chore: /- /g'
+              echo ""
+            fi
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
       - name: 创建 Release
         uses: softprops/action-gh-release@v1
         with:
@@ -71,24 +127,15 @@ jobs:
           prerelease: false
           generate_release_notes: true
           body: |
-            ## 更新内容
+            ${{ steps.changelog.outputs.CHANGELOG }}
             
-            ### 新特性 ✨
-            - 待补充
-            
-            ### 修复 🐛
-            - 待补充
-            
-            ### 优化 ⚡️
-            - 待补充
-            
-            ### 文档 📝
-            - 待补充
-            
-            ### 其他 🔧
-            - 版本更新至 v${{ github.event.inputs.version }}
+            ### 版本信息
+            - 版本号: v${{ github.event.inputs.version }}
+            - 环境: ${{ github.event.inputs.environment }}
+            - 发布时间: ${{ env.RELEASE_DATE }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_DATE: ${{ steps.date.outputs.date }}
       
       - name: 上传构建产物
         uses: actions/upload-artifact@v3
