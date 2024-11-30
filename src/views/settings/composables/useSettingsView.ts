@@ -7,7 +7,7 @@ export function useSettingsView() {
   /**
    * @description 当前设置视图
    */
-  const currentSettingView = ref<'general' | 'style'>('general')
+  const currentSettingView = ref<'general' | 'style' | 'note'>('general')
 
   /**
    * @description 处理显示基础设置

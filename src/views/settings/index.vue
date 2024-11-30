@@ -3,8 +3,9 @@ import { onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import { useSettingsData } from './composables/useSettings'
 import { useSettingsView } from './composables/useSettingsView'
 
-// 懒加载样式设置组件
+// 懒加载组件
 const StyleSettings = defineAsyncComponent(() => import('./StyleSettings.vue'))
+const NoteSettings = defineAsyncComponent(() => import('./components/NoteSettings.vue'))
 
 const {
   version,
@@ -20,16 +21,22 @@ const {
   handleShowStyleSettings
 } = useSettingsView()
 
+const handleShowNoteSettings = () => {
+  currentSettingView.value = 'note'
+}
+
 // 添加事件监听
 onMounted(() => {
   window.addEventListener('showGeneralSettings', handleShowGeneralSettings)
   window.addEventListener('showStyleSettings', handleShowStyleSettings)
+  window.addEventListener('showNoteSettings', handleShowNoteSettings)
 })
 
 // 移除事件监听
 onUnmounted(() => {
   window.removeEventListener('showGeneralSettings', handleShowGeneralSettings)
   window.removeEventListener('showStyleSettings', handleShowStyleSettings)
+  window.removeEventListener('showNoteSettings', handleShowNoteSettings)
 })
 </script>
 
@@ -45,7 +52,7 @@ onUnmounted(() => {
           <label>主题</label>
           <select v-model="settings.theme">
             <option value="light">浅色主题</option>
-            <option value="dark">深色主题</option>
+            <option value="dark">色主题</option>
             <option value="system">跟随系统</option>
           </select>
         </div>
@@ -112,6 +119,19 @@ onUnmounted(() => {
       <Suspense>
         <template #default>
           <StyleSettings />
+        </template>
+        <template #fallback>
+          <div class="loading">
+            <span class="loading-text">加载中...</span>
+          </div>
+        </template>
+      </Suspense>
+    </template>
+
+    <template v-else-if="currentSettingView === 'note'">
+      <Suspense>
+        <template #default>
+          <NoteSettings />
         </template>
         <template #fallback>
           <div class="loading">

@@ -42,6 +42,16 @@ const menuItems: MenuItemType[] = [
         }
       },
       {
+        title: '笔记设置',
+        icon: '📝',
+        action: () => {
+          currentView.value = 'settings'
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('showNoteSettings'))
+          }, 0)
+        }
+      },
+      {
         title: '自定义样式',
         icon: '🎨',
         action: () => {
